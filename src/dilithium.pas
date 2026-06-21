@@ -1,3 +1,16 @@
+// ###################################################################
+// #### This file is part of the Crystals cryptographic algorithm library.
+// #### A direct port of the reference C implementation.
+// ####
+// #### Copyright:(c) 2026, Michael R. . All rights reserved.
+// ####
+// #### Unless required by applicable law or agreed to in writing, software
+// #### distributed under the License is distributed on an "AS IS" BASIS,
+// #### WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// #### See the License for the specific language governing permissions and
+// #### limitations under the License.
+// ###################################################################
+
 unit dilithium;
 
 interface
@@ -75,7 +88,7 @@ function pqcrystals_dilithium5_ref_open( m : PByte; var mlen: integer; sigMessag
 
 implementation
 
-uses SysUtils, Types, fips202, Windows;
+uses SysUtils, Types, fips202, cryptRnd;
 
 // ###########################################
 // #### Params
@@ -2161,18 +2174,6 @@ begin
 end;
 
 // ###########################################
-// #### Random
-// ###########################################
-
-// newer BCrypt.h API
-const BCRYPT_USE_SYSTEM_PREFERRED_RNG = $00000002;   // hAlgorithm needs to be null then
-
-type
-  BCrypt_ALG_HANDLE = Pointer;
-  function BCryptGenRandom(hAlgorith : BCRYPT_ALG_HANDLE; pbBuffer : PByte;
-                               cbBuffer : ULong; dwFlags : ULong ) : Longint; stdcall; external 'BCrypt.dll';
-
-// ###########################################
 // #### sign.c
 // ###########################################
 
@@ -2199,7 +2200,7 @@ var seedbuf : Array[0..127] of Byte;
     s2, t1, t0 : TDilithiumPolyVecKMax;
 begin
      // get randomness for rho, rhoprime and key
-     BCryptGenRandom(nil, @seedbuf[0], SEEDBYTES, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+     CryptRandom(seedbuf[0], SEEDBYTES);
      seedbuf[SEEDBYTES] := Byte(params.K);
      seedbuf[SEEDBYTES + 1] := Byte(params.L);
 
@@ -2402,7 +2403,7 @@ begin
      pre[1] := Byte(ctxlen);
      Move( ctx^, pre[2], ctxlen);
 
-     BCryptGenRandom(nil, @rnd[0], RNDBYTES, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+     CryptRandom(rnd[0], RNDBYTES);
 
      Result := crypto_sign_signature_internal(params, sig, siglen, m, mlen, @pre[0], 2 + ctxlen, rnd, sk) = 0;
 end;

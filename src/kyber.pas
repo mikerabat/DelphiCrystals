@@ -1,16 +1,21 @@
+// ###################################################################
+// #### This file is part of the Crystals cryptographic algorithm library.
+// #### A direct port of the reference C implementation.
+// ####
+// #### Copyright:(c) 2026, Michael R. . All rights reserved.
+// ####
+// #### Unless required by applicable law or agreed to in writing, software
+// #### distributed under the License is distributed on an "AS IS" BASIS,
+// #### WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// #### See the License for the specific language governing permissions and
+// #### limitations under the License.
+// ###################################################################
+
 unit kyber;
 
 interface
 
-uses SysUtils, Windows;
-
-
-type
-  keccak_state = record
-    s : Array[0..24] of UInt64;
-    pos : UInt32;
-  end;
-  xof_state = keccak_state;
+uses SysUtils;
 
 // ###########################################
 // #### Interface functions
@@ -53,7 +58,7 @@ function kyber1024_kem_keypair_derand(var pk : TKyber1024PublicKeyBytes; var sk 
 
 implementation
 
-uses fips202;
+uses fips202, cryptRnd;
 
 // ###########################################
 // #### Parameter for various Kyber strengths
@@ -1689,18 +1694,6 @@ begin
 end;
 
 // ###########################################
-// #### Random
-// ###########################################
-
-// newer BCrypt.h API
-const BCRYPT_USE_SYSTEM_PREFERRED_RNG = $00000002;   // hAlgorithm needs to be null then
-
-type
-  BCrypt_ALG_HANDLE = Pointer;
-  function BCryptGenRandom(hAlgorith : BCRYPT_ALG_HANDLE; pbBuffer : PByte;
-                               cbBuffer : ULong; dwFlags : ULong ) : Longint; stdcall; external 'BCrypt.dll';
-
-// ###########################################
 // #### kem.c
 // ###########################################
 
@@ -1755,7 +1748,7 @@ end;
 function crypto_kem_keypair_param(const params : TKyberParams; var pk : TKyberPublicKeyBytes; var sk : TKyberSecretKeyBytes) : integer;
 var coins : TKyberSymBytes2;
 begin
-     BCryptGenRandom(nil, @coins[0][0], sizeof(coins), BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+     CryptRandom(coins[0][0], sizeof(coins));
      Result := crypto_kem_keypair_derand_param(params, pk, sk, coins);
 end;
 
@@ -1824,7 +1817,7 @@ function crypto_kem_enc_param(const params : TKyberParams; var ct : TKyberCipher
   const pk : TKyberPublicKeyBytes ) : integer;
 var coins : TKyberSymBytes;
 begin
-     BCryptGenRandom(nil, @coins[0], sizeof(coins), BCRYPT_USE_SYSTEM_PREFERRED_RNG);
+     CryptRandom(coins[0], sizeof(coins));
      crypto_kem_enc_derand_param(params, ct, ss, pk, coins);
      Result := 0;
 end;

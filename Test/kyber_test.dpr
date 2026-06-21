@@ -6,7 +6,8 @@ uses
   SysUtils,
   StrUtils,
   kyber in '..\src\kyber.pas',
-  fips202 in '..\src\fips202.pas';
+  fips202 in '..\src\fips202.pas',
+  cryptRnd in '..\src\cryptRnd.pas';
 
 function TestKeys768 : boolean;
 var pk : TKyber768PublicKeyBytes;

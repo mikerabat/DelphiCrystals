@@ -7,7 +7,8 @@ uses
   Windows,
   StrUtils,
   fips202 in '..\src\fips202.pas',
-  dilithium in '..\src\dilithium.pas';
+  dilithium in '..\src\dilithium.pas',
+  cryptRnd in '..\src\cryptRnd.pas';
 
 const CTXLEN = 14;
       MLEN = 59;
