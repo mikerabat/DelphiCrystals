@@ -1,0 +1,67 @@
+program FPCDilithiumTest;
+
+{$mode objfpc}{$H+}
+
+uses
+  {$IFDEF UNIX}
+  cthreads,
+  {$ENDIF}
+  Classes, SysUtils, CustApp, dilithiumtests, strutils,
+  { you can add units after this }
+  dilithium,
+  fips202,
+  cryptRnd;
+
+type
+
+  { TDilithiumTest }
+
+  TDilithiumTest = class(TCustomApplication)
+  protected
+    procedure DoRun; override;
+  public
+  end;
+
+{ TDilithiumTest }
+
+procedure TDilithiumTest.DoRun;
+var res2, res3, res5: boolean;
+begin
+  try
+    Writeln('Simple "shake256" test');
+    TestShake;
+
+    Writeln('Test Dilithium 5');
+    res5 := TestSign_Dilithium_5;
+    Writeln('Test Dilithium 3');
+    res3 := TestSign_Dilithium_3;
+    Writeln('Test Dilithium 2');
+    res2 := TestSign_Dilithium_2;
+
+    Writeln;
+    Writeln('Overall Result:');
+    Writeln('Dilithium 5: ', Ifthen( res5, 'SUCCESS', 'FAILED'));
+    Writeln('Dilithium 3: ', Ifthen( res3, 'SUCCESS', 'FAILED'));
+    Writeln('Dilithium 2: ', Ifthen( res2, 'SUCCESS', 'FAILED'));
+
+
+    Writeln('Hit enter to end...');
+    readln
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+
+  // stop program loop
+  Terminate;
+end;
+
+var
+  Application: TDilithiumTest;
+begin
+  Application:=TDilithiumTest.Create(nil);
+  Application.Title:='Test Dilithium';
+  Application.Run;
+  Application.Free;
+end.
+

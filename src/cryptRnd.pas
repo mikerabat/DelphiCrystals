@@ -26,11 +26,9 @@ implementation
 // ###########################################
 type
   ULONG = Cardinal; // from windows.pas
+  BCrypt_ALG_HANDLE = Pointer;
 
 const BCRYPT_USE_SYSTEM_PREFERRED_RNG = $00000002;   // hAlgorithm needs to be null then
-
-type
-  BCrypt_ALG_HANDLE = Pointer;
 
 function BCryptGenRandom(hAlgorith : BCRYPT_ALG_HANDLE; pbBuffer : PByte;
                                cbBuffer : ULong; dwFlags : ULong ) : Longint; stdcall; external 'BCrypt.dll';
@@ -48,20 +46,17 @@ end;
 
 {$IFDEF LINUX}
 
-uses Classes;
+uses ctypes;
+
+// this is not defined in BaseUnix -> define the syscall!
+function fpgetrandom(var buf; buflen : csize_t; flags : cuint) : csize_t; cdecl; external 'c' name 'getrandom';
 
 procedure CryptRandom( var buf; len : integer );
-var fs : TFileStream;
 begin
      if len <= 0 then
         exit;
 
-     fs := TFileStream.Create('/dev/urandom', fmOpenRead);
-     try
-        fs.ReadBuffer( buf, len );
-     finally
-            fs.Free;
-     end;
+     fpgetrandom(buf, len, 0);
 end;
 {$ENDIF}
 

@@ -1,91 +1,65 @@
 # CRYSTALS Kyber & Dilithium for Delphi / Pascal
 
-Dieses Projekt ist eine möglichst direkte Übersetzung der offiziellen Referenzimplementierungen von **CRYSTALS-Kyber** und **CRYSTALS-Dilithium** aus den ursprünglichen C-Implementierungen der PQ-CRYSTALS-Projekte nach **Delphi / Object Pascal**.
+This project provides a Delphi/Object Pascal port of the official **CRYSTALS-Kyber** and **CRYSTALS-Dilithium** reference implementations from the PQ-CRYSTALS C projects.
 
-Der Fokus liegt ausdrücklich nicht auf einer eigenständigen Neuinterpretation der Algorithmen, sondern auf einer nachvollziehbaren, strukturell nahen Portierung des Originalcodes.
+The code is designed to stay structurally close to the original C sources, making it easy to compare, test and validate against the official implementations.
 
-## Herkunft der Implementierung
+The project can be used with Delphi and Free Pascal Compiler (FPC), including on Windows and Linux platforms.
 
-Dieses Projekt basiert direkt auf den offiziellen PQ-CRYSTALS-Repositories:
+## Included Algorithms
 
-- [pq-crystals/kyber](https://github.com/pq-crystals/kyber)
-- [pq-crystals/dilithium](https://github.com/pq-crystals/dilithium)
+### CRYSTALS-Kyber
 
-Die kryptographische Logik, Parameter, Funktionsstruktur und interne Organisation orientieren sich so weit wie möglich an den Originalimplementierungen.
+**Kyber** is a post-quantum key encapsulation mechanism.
 
-Änderungen wurden nur dort vorgenommen, wo sie für die Umsetzung in **Delphi / Object Pascal** notwendig waren, zum Beispiel bei:
+Supported parameter sets:
 
-- Typdefinitionen
-- Array- und Speicherzugriffen
-- Pointer- und Buffer-Handling
-- sprachspezifischen Konstanten und Deklarationen
-- Anpassungen an Delphi-Compiler und Projektstruktur
+* `Kyber512`
+* `Kyber768`
+* `Kyber1024`
 
-## Ziel des Projekts
+Typical operations:
 
-Ziel dieses Projekts ist es, die Referenzimplementierungen von **CRYSTALS-Kyber** und **CRYSTALS-Dilithium** für Delphi-Projekte verfügbar zu machen.
+* Generate key pair
+* Encapsulate shared secret
+* Decapsulate shared secret
 
-Durch die direkte Übersetzung soll der Code möglichst einfach mit den offiziellen C-Quellen vergleichbar bleiben. Das Projekt eignet sich daher insbesondere für:
+### CRYSTALS-Dilithium
 
-- Tests
-- Forschung
-- Interoperabilitätsprüfungen
-- Lern- und Analysezwecke
-- Integrationsexperimente in Delphi-Anwendungen
+**Dilithium** is a post-quantum digital signature scheme.
 
-## Enthaltene Algorithmen
+Supported parameter sets:
 
-## CRYSTALS-Kyber
+* `Dilithium2`
+* `Dilithium3`
+* `Dilithium5`
 
-**Kyber** ist ein post-quanten-sicheres Key-Encapsulation-Mechanism-Verfahren.
+Typical operations:
 
-Dieses Projekt enthält die Kyber-Implementierung als Delphi-/Pascal-Port der offiziellen Referenzimplementierung.
+* Generate key pair
+* Sign messages
+* Verify signatures
 
-Enthaltene Parameter-Sets:
-
-- `Kyber512`
-- `Kyber768`
-- `Kyber1024`
-
-Typische Operationen:
-
-- Schlüsselpaar erzeugen
-- Shared Secret kapseln
-- Shared Secret entkapseln
-
-## CRYSTALS-Dilithium
-
-**Dilithium** ist ein post-quanten-sicheres digitales Signaturverfahren.
-
-Dieses Projekt enthält die Dilithium-Implementierung als Delphi-/Pascal-Port der offiziellen Referenzimplementierung.
-
-Enthaltene Parameter-Sets:
-
-- `Dilithium2`
-- `Dilithium3`
-- `Dilithium5`
-
-Typische Operationen:
-
-- Schlüsselpaar erzeugen
-- Nachricht signieren
-- Signatur prüfen
-- signierte Nachrichten erzeugen und verifizieren
-
-## Projektstruktur
+## Project Structure
 
 ```text
-.
-├── kyber.pas              # Delphi/Pascal-Port der Kyber-Referenzimplementierung
-├── dilithium.pas          # Delphi/Pascal-Port der Dilithium-Referenzimplementierung
-├── fips202.pas            # SHA3 / SHAKE / Keccak-Funktionen
-├── kyber_test.dpr         # Testprojekt für Kyber
-└── dilithium_test.dpr     # Testprojekt für Dilithium
+├── src.
+	├── kyber.pas
+	├── dilithium.pas
+	├── fips202.pas
+	├── cryptRnd.pas
+├── test
+	├── kyber_test.dpr
+	├── dilithiumtests.pas
+	├── kybertests.pas
+	├── FPCDilithiumTest.ppr (Codetyphon FPC project)
+	├── FPCKyberTest.ppr (Codetyphon FPC project)
+	└── dilithium_test.dpr
 ```
 
-## Verwendung
+## Usage
 
-Die Units können direkt in Delphi-Projekte eingebunden werden:
+Include the units directly in your Delphi or FPC project:
 
 ```pascal
 uses
@@ -94,46 +68,17 @@ uses
   fips202;
 ```
 
-Die konkreten Aufrufe richten sich nach den öffentlichen Funktionen der jeweiligen Units.
+Example usage is available in the included test projects.
 
-Beispiele befinden sich in den Testprojekten:
+## Notes
 
-- `kyber_test.dpr`
-- `dilithium_test.dpr`
+This is a direct port of the official reference implementations and is intended for testing, research, interoperability checks and integration experiments.
 
-## Status
+Before using it in production or security-critical environments, additional review and validation are strongly recommended.
 
-Dieses Projekt ist ein Delphi-/Pascal-Port der offiziellen Referenzimplementierungen.
+## License
 
-Es ist vor allem gedacht für:
+The original implementations are from the official PQ-CRYSTALS projects:
 
-- Vergleich mit den Originalimplementierungen
-- Tests und Experimente
-- Portabilitätsprüfungen
-- Integration in bestehende Delphi-Codebasen
-
-Vor einem produktiven Einsatz in sicherheitskritischen Umgebungen sollten zusätzliche Prüfungen durchgeführt werden.
-
-## Sicherheitshinweise
-
-Dieses Projekt sollte vor produktivem Einsatz sorgfältig geprüft werden.
-
-Insbesondere empfohlen sind:
-
-- Vergleich mit offiziellen Testvektoren
-- kryptographisches Code Review
-- Prüfung der Zufallszahlenerzeugung
-- Side-Channel-Analyse
-- Prüfung auf Compiler- und Plattformabhängigkeiten
-- Interoperabilitätstests mit den offiziellen Referenzimplementierungen
-
-Die direkte Übersetzung der Referenzimplementierungen bedeutet nicht automatisch, dass der Port für alle produktiven Einsatzszenarien sicher oder optimiert ist.
-
-## Lizenz
-
-Die Originalimplementierungen stammen aus den offiziellen PQ-CRYSTALS-Projekten:
-
-- <https://github.com/pq-crystals/kyber>
-- <https://github.com/pq-crystals/dilithium>
-
-Bitte beachten Sie die Lizenzbedingungen der jeweiligen Originalprojekte.
+* https://github.com/pq-crystals/kyber
+* https://github.com/pq-crystals/dilithium

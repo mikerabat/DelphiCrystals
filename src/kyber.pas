@@ -249,7 +249,7 @@ const MONT : integer = -1044; // 2^16 mod q
       QINV : integer = -3327; // q^-1 mod 2^16
 
 
-function SAR32( a, b : integer ) : integer; register;
+function SAR32( a, b : integer ) : integer; {$IFNDEF FPC}register;{$ENDIF}
 {$IFDEF CPUX86}
 asm
    mov ecx, edx;
@@ -271,7 +271,7 @@ end;
 
 
 
-function SAR16( a, b : Int16 ) : int16; register;
+function SAR16( a, b : Int16 ) : int16; {$IFNDEF FPC}register;{$ENDIF}
 {$IFDEF CPUX86}
 asm
    mov cx, dx;

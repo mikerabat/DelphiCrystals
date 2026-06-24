@@ -15,6 +15,8 @@ unit fips202;
 
 interface
 
+{$IFDEF FPC}{$mode Delphi}{$ENDIF}
+
 type
   TKeccakStateData = Array[0..24] of UInt64;
   TKeccakState = record
@@ -56,15 +58,15 @@ const NRounds = 24;
       SHA3_256_RATE = 136;
       SHA3_512_RATE = 72;
 
-{$IFDEF CPUX86}
-{$DEFINE LITTLE_ENDIAN}
-{$ENDIF}
-{$IFDEF CPUX64}
-{$DEFINE LITTLE_ENDIAN}
-{$ENDIF}
+{$IFDEF CPUX86}
+{$DEFINE LITTLE_ENDIAN}
+{$ENDIF}
+{$IFDEF CPUX64}
+{$DEFINE LITTLE_ENDIAN}
+{$ENDIF}
 
 
-function ROL( a : UInt64; offset : integer ) : UInt64;
+function ROL( a : UInt64; offset : integer ) : UInt64;
 begin
      Result := UInt64(a shl offset) xor UInt64(a shr (64 - offset));
 end;
@@ -95,16 +97,7 @@ begin
      end;
      {$ENDIF}
 end;
-//static uint64_t load64(const uint8_t x[8]) {
-//  unsigned int i;
-//  uint64_t r = 0;
-//
-//  for(i=0;i<8;i++)
-//    r |= (uint64_t)x[i] << 8*i;
-//
-//  return r;
-//}
-//
+
 ///*************************************************
 //* Name:        store64
 //*
@@ -129,6 +122,10 @@ begin
      {$ENDIF}
 end;
 
+// due to a bug in FPC the constants cannot be defined as UInt64 and have the leading bit
+// set to 1 -> it triggers a range check error in compile time (though it should not)
+// -> disable range checking and the error is turned into a warning :/
+{$IFDEF FPC} {$R-} {$ENDIF}
 ///* Keccak round constants */
 //static const uint64_t KeccakF_RoundConstants[NROUNDS] = {
 const cKeccakF_RoundConstants : Array[0..NRounds - 1] of UInt64 =
